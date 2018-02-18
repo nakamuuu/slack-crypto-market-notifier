@@ -31,8 +31,8 @@ buildConfig {
     if (file.exists()) {
         properties.load(file.newDataInputStream())
     }
-    buildConfigField 'String', 'SLACK_TOKEN', properties.getProperty("slackToken")
-    buildConfigField 'String', 'SLACK_CHANNEL_NAME', properties.getProperty("slackChannelName")
+    buildConfigField 'String', 'SLACK_TOKEN', properties.getProperty("slackToken", "${System.env.SLACK_TOKEN}")
+    buildConfigField 'String', 'SLACK_CHANNEL_NAME', properties.getProperty("slackChannelName", "${System.env.SLACK_CHANNEL_NAME}")
 }
 
 repositories {
