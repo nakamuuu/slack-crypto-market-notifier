@@ -14,22 +14,31 @@ class NotifierJob : Job {
     override fun execute(context: JobExecutionContext) {
         logger.info("NotifierJob executed.")
 
-        val response = bitFlyerService.getExecutions("BTC_JPY").execute()
-        if (response.isSuccessful) {
-            response.body()?.let { executions ->
-                val text = """:bitcoin: BTC/JPY : ${"¥%,d".format(executions[0].price)}"""
-                slackService.postMessage(
-                    BuildConfig.SLACK_TOKEN,
-                    BuildConfig.SLACK_CHANNEL_NAME,
-                    """[{"text": "$text", "color": "#f7941a"}]"""
-                ).execute()
-            }
-        } else {
-            val text = "Failed to get the execution history for BTC/JPY."
+        val responses = arrayOf(
+            bitFlyerService.getExecutions("BTC_JPY").execute(),
+            bitFlyerService.getExecutions("ETH_BTC").execute(),
+            bitFlyerService.getExecutions("BCH_BTC").execute()
+        )
+        if (responses.any { it.isSuccessful }) {
+            val btcPrice = responses[0].body()!![0].price
+            val ethPrice = responses[1].body()!![0].price
+            val bchPrice = responses[2].body()!![0].price
+            val text = """
+                |:bitcoin: BTC/JPY : ${"¥%,.0f".format(btcPrice)}
+                |:ethereum: ETH/BTC : ${"%.5fBTC".format(ethPrice)} (${"¥%,.0f".format(ethPrice * btcPrice)})
+                |:bitcoin-cash: BCH/BTC : ${"%.5fBTC".format(bchPrice)} (${"¥%,.0f".format(bchPrice * btcPrice)})
+            """.trimMargin()
             slackService.postMessage(
                 BuildConfig.SLACK_TOKEN,
                 BuildConfig.SLACK_CHANNEL_NAME,
-                """[{"text": "$text", "color": "#f7941a"}]"""
+                """[{"text": "$text", "color": "#458ccb"}]"""
+            ).execute()
+        } else {
+            val text = "Failed to get the execution histories."
+            slackService.postMessage(
+                BuildConfig.SLACK_TOKEN,
+                BuildConfig.SLACK_CHANNEL_NAME,
+                """[{"text": "$text", "color": "#c5c5c5"}]"""
             ).execute()
         }
     }

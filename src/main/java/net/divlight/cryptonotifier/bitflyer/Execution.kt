@@ -5,7 +5,7 @@ import java.util.*
 data class Execution(
     val id: Long,
     val side: String,
-    val price: Int,
+    val price: Double,
     val size: Double,
     val execDate: Date,
     val buyChildOrderAcceptanceId: String,

@@ -19,7 +19,7 @@ interface BitFlyerService {
 
     companion object {
         private const val BASE_URL = "https://api.bitflyer.jp/"
-        private const val RESPONSE_DATE_FORMAT = "yyyy-MM-dd'T'HH:mm:ss.S"
+        private const val RESPONSE_DATE_FORMAT = "yyyy-MM-dd'T'HH:mm:ss"
 
         fun createService(): BitFlyerService = Retrofit.Builder()
             .baseUrl(BASE_URL)
