@@ -9,6 +9,7 @@ import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.http.GET
 import retrofit2.http.Query
+import java.util.concurrent.TimeUnit
 
 interface BitFlyerService {
     @GET("/v1/executions")
@@ -37,6 +38,8 @@ interface BitFlyerService {
 
         private fun createOkHttpClient(): OkHttpClient = OkHttpClient.Builder().apply {
             addInterceptor(HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BASIC))
+            connectTimeout(30, TimeUnit.SECONDS)
+            readTimeout(30, TimeUnit.SECONDS)
         }.build()
     }
 }
