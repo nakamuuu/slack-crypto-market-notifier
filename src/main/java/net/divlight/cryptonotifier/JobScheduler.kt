@@ -16,7 +16,8 @@ open class JobScheduler {
                 newJob(NotifierJob::class.java).build(),
                 newTrigger()
                     .withSchedule(
-                        cronSchedule("0 0 0,4,8,12,16,20 * * ?")
+                        // Delay execution for 10 seconds to avoid SocketTimeoutException
+                        cronSchedule("10 0 0,4,8,12,16,20 * * ?")
                             .inTimeZone(TimeZone.getTimeZone("GMT+9:00"))
                     )
                     .build()
