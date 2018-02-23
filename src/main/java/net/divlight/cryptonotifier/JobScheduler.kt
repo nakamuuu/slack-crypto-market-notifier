@@ -1,6 +1,6 @@
 package net.divlight.cryptonotifier
 
-import org.quartz.CronScheduleBuilder.dailyAtHourAndMinute
+import org.quartz.CronScheduleBuilder.cronSchedule
 import org.quartz.JobBuilder.newJob
 import org.quartz.TriggerBuilder.newTrigger
 import org.quartz.impl.StdSchedulerFactory
@@ -14,24 +14,13 @@ open class JobScheduler {
             scheduler.start()
             scheduler.scheduleJob(
                 newJob(NotifierJob::class.java).build(),
-                buildDailyAtHourAndMinuteTriggerWithJST(0, 0)
-            )
-            scheduler.scheduleJob(
-                newJob(NotifierJob::class.java).build(),
-                buildDailyAtHourAndMinuteTriggerWithJST(6, 0)
-            )
-            scheduler.scheduleJob(
-                newJob(NotifierJob::class.java).build(),
-                buildDailyAtHourAndMinuteTriggerWithJST(12, 0)
-            )
-            scheduler.scheduleJob(
-                newJob(NotifierJob::class.java).build(),
-                buildDailyAtHourAndMinuteTriggerWithJST(18, 0)
+                newTrigger()
+                    .withSchedule(
+                        cronSchedule("0 0 0,4,8,12,16,20 * * ?")
+                            .inTimeZone(TimeZone.getTimeZone("GMT+9:00"))
+                    )
+                    .build()
             )
         }
-
-        private fun buildDailyAtHourAndMinuteTriggerWithJST(hour: Int, minute: Int) = newTrigger()
-            .withSchedule(dailyAtHourAndMinute(hour, minute).inTimeZone(TimeZone.getTimeZone("GMT+9:00")))
-            .build()
     }
 }
